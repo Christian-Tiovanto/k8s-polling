@@ -2,7 +2,7 @@ replicaCount: 1
 app:
   name: poll-app
 image:
-  repository: 472615464463.dkr.ecr.ap-southeast-1.amazonaws.com/poll_app
+  repository: public.ecr.aws/o3d9w8q6/poll-app
   pullPolicy: Always
   tag: "0.1.3"
 service:

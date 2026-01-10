@@ -1,0 +1,83 @@
+version: 3
+
+tasks:
+  setup:
+    desc: "Spin up the entire local environment"
+    cmds:
+      - task: 01-create-cluster
+      - task: 07-install-kong-ingress-controller
+      - task: 04-enable-metrics-server
+      - task: 02-deploy-database
+      - task: 03-deploy-rabbitmq
+      - task: 05-deploy-backend-service
+      - task: 06-deploy-frontend-service
+      - task: 08-deploy-kong-gateway-api
+      - cmd: gum style "✅ Setup Complete! Run 'task 09-port-forward-kong-service' in a new terminal to access the app."
+
+  01-create-cluster:
+    desc: "Create a Kubernetes cluster using kind"
+    cmds:
+      - kind create cluster --config kind-config.yaml || kind export kubeconfig --name kind
+
+  02-deploy-database:
+    desc: "Deploy database"
+    cmds:
+      - helm upgrade --install database ./charts/database -f ./charts/database/values.yaml
+
+  03-deploy-rabbitmq:
+    desc: "Deploy rabbitmq"
+    cmds:
+      - helm upgrade --install rabbitmq ./charts/rabbitmq -f ./charts/rabbitmq/values.yaml
+
+  04-enable-metrics-server:
+    desc: "Enable metrics server for HorizontalPodAutoscaler (HPA)"
+    cmds:
+      - kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.0/components.yaml
+      - sleep 2
+      - kubectl patch -n kube-system deployment metrics-server --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+  
+  05-deploy-backend-service:
+    desc: "Deploy Auth Service and (Polling Service + HPA)"
+    cmds:
+      - helm upgrade --install auth-app ./charts/auth-chart -f ./charts/auth-chart/values.yaml
+      - helm upgrade --install poll-app ./charts/polling-chart -f ./charts/polling-chart/values.yaml
+
+  06-deploy-frontend-service:
+    desc: "Deploy Frontend Application"
+    cmds:
+      - helm upgrade --install polbro-app ./charts/polbro-chart -f ./charts/polbro-chart/values.yaml
+
+  07-install-kong-ingress-controller:
+    desc: "Install kong ingress controller"
+    cmds:
+      - cmd: echo "Installing Kong Gateway API"
+        silent: true
+      - kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml --validate=false
+      - cmd: echo "Installing Kong Ingress"
+        silent: true
+      - |
+        helm upgrade --install kong ingress \
+          --repo https://charts.konghq.com \
+          -n kong \
+          --create-namespace
+
+  08-deploy-kong-gateway-api:
+    desc: "Deploy Kong Gateway API to handle Traffic"
+    cmds:
+      - kubectl apply -f ./infrastructure/gateway.yaml
+
+  09-port-forward-kong-service:
+    desc: "Forward Kong port to localhost"
+    cmds:
+      - cmd: echo "Waiting for Kong Pod to be ready..."
+      - kubectl port-forward -n kong svc/kong-gateway-proxy 5000:80
+  
+  10-install-argoCD:
+    desc: "install and run argoCD"
+    cmds:
+      - kubectl create namespace argocd
+      - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      - brew install argocd
+      - kubectl port-forward svc/argocd-server -n argocd 9000:443
+
+  

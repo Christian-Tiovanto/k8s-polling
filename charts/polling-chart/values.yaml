@@ -1,0 +1,59 @@
+replicaCount: 1
+
+app:
+  name: poll-app
+
+image:
+  repository: christianorigaming/poll_app
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 3000
+
+secretEnv:
+  DB_PORT: 5432
+  DB_NAME: polling
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: postgres
+  JWT_SECRET: secret
+  PORT: 3000
+  USER_EMAIL: admin
+  USER_PASS: 123456
+  RABBITMQ_URL: amqp://rabbitmq:rabbitmq@rabbitmq:5672
+  RABBITMQ_ORDER_EXCHANGE: chat
+  RABBITMQ_USER: rabbitmq
+  RABBITMQ_PASS: rabbitmq
+  REDIS_URL: redis://redis:6379
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+
+resources: 
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+
+

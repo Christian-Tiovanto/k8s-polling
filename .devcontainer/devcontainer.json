@@ -3,6 +3,7 @@
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
   "features": {
     /* 1. Core Languages (from your lockfile) */
+    "ghcr.io/devcontainers/features/go:1": {},
     "ghcr.io/devcontainers/features/node:1": {},
 
     /* 2. Core Infrastructure (Docker & K8s) */
@@ -15,15 +16,14 @@
     // We use the Homebrew feature to bulk-install the tools 
     // that don't have dedicated Features (Tilt, K9s, Gum, etc.)
     "ghcr.io/meaningful-ooo/devcontainer-features/homebrew:2": {
-      "packages": "jq k9s kubectx kubent tilt yq go-task gettext"
+      "packages": "jq k9s kubectx kubent tilt yq go-task gettext gum kind"
     }
   },
-
   /* Customizations */
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
+        "golang.go",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "ms-azuretools.vscode-docker"
       ]
@@ -32,7 +32,7 @@
 
   /* Post-Create Commands */
   // Used for tools that aren't in Homebrew/Features (like Kluctl)
-  "postCreateCommand": "curl -s https://kluctl.io/install.sh | bash",
+  "postCreateCommand": "curl -s https://kluctl.io/install.sh | sudo bash && brew install jq k9s kubectx kubent tilt yq go-task gettext gum kind cloud-provider-kind",
 
   "remoteUser": "vscode"
 }

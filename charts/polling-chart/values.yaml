@@ -2,7 +2,7 @@ replicaCount: 1
 app:
   name: poll-app
 image:
-  repository: christianorigaming/poll_app
+  repository: 472615464463.dkr.ecr.ap-southeast-1.amazonaws.com/poll_app
   pullPolicy: Always
   tag: "0.1.3"
 service:

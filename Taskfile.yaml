@@ -79,5 +79,15 @@ tasks:
       - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
       - brew install argocd
       - kubectl port-forward svc/argocd-server -n argocd 9000:443
-
+  
+  11-install-prometheus-stack:
+    desc: "Install Prometheus and Grafana"
+    cmds:
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo update
+      - |
+        helm upgrade --install monitoring-stack prometheus-community/kube-prometheus-stack \
+          --namespace monitoring \
+          --create-namespace \
+          --set grafana.adminPassword=admin
   

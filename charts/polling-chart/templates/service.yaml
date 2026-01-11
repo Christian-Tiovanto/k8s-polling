@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}
   labels:
     {{- include "polling-chart.selectorLabels" . | nindent 4 }}
+    release: monitoring-stack
 spec:
   type: {{ .Values.service.type }}
   ports:

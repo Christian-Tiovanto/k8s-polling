@@ -24,6 +24,9 @@ spec:
             - name: http
               containerPort: {{ .Values.secretEnv.PORT }}
               protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.secretEnv.PORT }}
+              protocol: TCP
           envFrom:
             - secretRef:
                 name: {{ .Chart.Name }}-secret

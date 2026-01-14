@@ -17,15 +17,15 @@ tasks:
     cmds:
       - kind create cluster --config kind-config.yaml || kind export kubeconfig --name kind
 
-  02-deploy-database:
-    desc: "Deploy database"
-    cmds:
-      - helm upgrade --install database ./charts/database -f ./charts/database/values.yaml
+  # 02-deploy-database:
+  #   desc: "Deploy database"
+  #   cmds:
+  #     - helm upgrade --install database ./charts/database -f ./charts/database/values.yaml
 
-  03-deploy-rabbitmq:
-    desc: "Deploy rabbitmq"
-    cmds:
-      - helm upgrade --install rabbitmq ./charts/rabbitmq -f ./charts/rabbitmq/values.yaml
+  # 03-deploy-rabbitmq:
+  #   desc: "Deploy rabbitmq"
+  #   cmds:
+  #     - helm upgrade --install rabbitmq ./charts/rabbitmq -f ./charts/rabbitmq/values.yaml
 
   04-enable-metrics-server:
     desc: "Enable metrics server for HorizontalPodAutoscaler (HPA)"
@@ -34,16 +34,16 @@ tasks:
       - sleep 2
       - kubectl patch -n kube-system deployment metrics-server --type=json -p '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
   
-  05-deploy-backend-service:
-    desc: "Deploy Auth Service and (Polling Service + HPA)"
-    cmds:
-      - helm upgrade --install auth-app ./charts/auth-chart -f ./charts/auth-chart/values.yaml
-      - helm upgrade --install poll-app ./charts/polling-chart -f ./charts/polling-chart/values.yaml
+  # 05-deploy-backend-service:
+  #   desc: "Deploy Auth Service and (Polling Service + HPA)"
+  #   cmds:
+  #     - helm upgrade --install auth-app ./charts/auth-chart -f ./charts/auth-chart/values.yaml
+  #     - helm upgrade --install poll-app ./charts/polling-chart -f ./charts/polling-chart/values.yaml
 
-  06-deploy-frontend-service:
-    desc: "Deploy Frontend Application"
-    cmds:
-      - helm upgrade --install polbro-app ./charts/polbro-chart -f ./charts/polbro-chart/values.yaml
+  # 06-deploy-frontend-service:
+  #   desc: "Deploy Frontend Application"
+  #   cmds:
+  #     - helm upgrade --install polbro-app ./charts/polbro-chart -f ./charts/polbro-chart/values.yaml
 
   07-install-kong-ingress-controller:
     desc: "Install kong ingress controller"

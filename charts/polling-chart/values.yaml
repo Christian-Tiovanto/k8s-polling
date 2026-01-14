@@ -4,7 +4,7 @@ app:
 image:
   repository: public.ecr.aws/o3d9w8q6/poll-app
   pullPolicy: Always
-  tag: "0.1.4"
+  tag: "0.1.5"
 service:
   type: ClusterIP
   port: 3000

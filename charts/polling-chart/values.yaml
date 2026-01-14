@@ -25,6 +25,10 @@ secretEnv:
   REDIS_URL: redis://redis:6379
   REDIS_HOST: redis
   REDIS_PORT: 6379
+  MAIL_HOST: sandbox.smtp.mailtrap.io
+  MAIL_PORT: 2525
+  MAIL_USER: c5f14b4905b4ee
+  MAIL_PASS: 52f28afcd5ec9e
 resources:
   limits:
     cpu: 500m

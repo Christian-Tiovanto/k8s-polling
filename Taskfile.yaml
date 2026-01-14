@@ -7,12 +7,10 @@ tasks:
       - task: 01-create-cluster
       - task: 07-install-kong-ingress-controller
       - task: 04-enable-metrics-server
-      - task: 02-deploy-database
-      - task: 03-deploy-rabbitmq
-      - task: 05-deploy-backend-service
-      - task: 06-deploy-frontend-service
       - task: 08-deploy-kong-gateway-api
-      - cmd: gum style "✅ Setup Complete! Run 'task 09-port-forward-kong-service' in a new terminal to access the app."
+      - task: 10-install-argoCD
+      - task: 11-install-prometheus-stack
+      - cmd: gum style "✅ Setup Complete! Run 'task 09-port-forward-kong-service and task 12-run-cloud-provider-kind' in a new terminal to access the app."
 
   01-create-cluster:
     desc: "Create a Kubernetes cluster using kind"
@@ -78,8 +76,7 @@ tasks:
       - kubectl create namespace argocd
       - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
       - brew install argocd
-      - kubectl port-forward svc/argocd-server -n argocd 9000:443
-  
+      - kubectl apply -f ./argocd/root-app.yaml
   11-install-prometheus-stack:
     desc: "Install Prometheus and Grafana"
     cmds:
@@ -90,4 +87,23 @@ tasks:
           --namespace monitoring \
           --create-namespace \
           --set grafana.adminPassword=admin
-  
+
+  12-run-cloud-provider-kind:
+    desc: "Install Prometheus and Grafana"
+    cmds:
+      - cloud-provider-kind
+
+  13-port-forward-argoCD:
+    desc: "Install Prometheus and Grafana"
+    cmds:
+      - kubectl port-forward svc/argocd-server -n argocd 9000:443
+
+  13-port-forward-prometheus:
+    desc: "Install Prometheus and Grafana"
+    cmds:
+      - kubectl port-forward -n monitoring svc/monitoring-stack-kube-prom-prometheus 9090
+
+  14-port-forward-grafana:
+    desc: "Install Prometheus and Grafana"
+    cmds:
+      - kubectl port-forward -n monitoring svc/monitoring-stack-grafana 3000:80
